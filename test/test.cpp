@@ -5,11 +5,15 @@
 
 int main(void)
 {
-	fn::maybe<int> t;
-
 	std::cout << "OK" << std::endl;
-	std::cout << (t >> [](int x){
-		return fn::maybe<int>(x + 5);
-	}).isJust() << std::endl;
+	auto tr = [](int x){
+		if (x < 0)
+			return fn::maybe<int>();
+		else
+			return fn::maybe<int>(x + 5);
+	};
+	std::cout << (fn::maybe<int>() >> tr).is_just() << std::endl;
+	std::cout << (fn::maybe<int>(4) >> tr).is_just() << std::endl;
+	std::cout << (fn::maybe<int>(-1) >> tr).is_just() << std::endl;
 	return 0;
 }

@@ -2,12 +2,12 @@
 
 namespace fn {
 
-template <typename Up>
+template <template <typename> class Ctx, typename Arg>
 class monad
 {
 public:
 	template <typename Fn>
-	Up operator>>(Fn &&fn);
+	Ctx<Arg> operator>>(Fn &&fn);
 };
 
 }
@@ -18,7 +18,7 @@ public:
 namespace fn {
 
 template <typename T>
-class maybe : public monad<maybe<T>>
+class maybe : public monad<maybe, T>
 {
 	std::optional<T> m_v;
 
@@ -29,22 +29,34 @@ public:
 	{
 	}
 
-	bool isJust(void)
+	bool is_just(void)
 	{
 		return m_v.has_value();
 	}
 
-	T& fromJust(void)
+	T& from_just(void)
 	{
 		return *m_v;
 	}
 };
 
 template <typename T>
-template <typename Fn>
-maybe<T> monad<maybe<T>>::operator>>(Fn &&fn)
+class monad<maybe, T>
 {
-	return maybe<T>();
+public:
+	template <typename Fn>
+	maybe<T> operator>>(Fn &&fn);
+};
+
+template <typename T>
+template <typename Fn>
+maybe<T> monad<maybe, T>::operator>>(Fn &&fn)
+{
+	auto &u = static_cast<maybe<T>&>(*this);
+	if (u.is_just())
+		return fn(u.from_just());
+	else
+		return maybe<T>();
 }
 
 }
