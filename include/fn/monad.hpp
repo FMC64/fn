@@ -2,27 +2,49 @@
 
 namespace fn {
 
-template <typename Ctx>
-class monad : public Ctx
+template <typename Up>
+class monad
 {
 public:
-	using type = Ctx;
-
 	template <typename Fn>
-	monad operator>>(Fn &&fn);
+	Up operator>>(Fn &&fn);
 };
-
-//template <template <typename...> typename Ctx, typename ...Args, typename Fn>
-//Ctx<Args...> operator>>(Ctx<Args...> &&in, Fn &&fn);
 
 }
 
 #include <optional>
+#include <tuple>
 
 namespace fn {
 
-/*template <typename T>
+template <typename T>
+class maybe : public monad<maybe<T>>
+{
+	std::optional<T> m_v;
+
+public:
+	template <typename ...Args>
+	maybe(Args &&...args) :
+		m_v(std::forward<Args>(args)...)
+	{
+	}
+
+	bool isJust(void)
+	{
+		return m_v.has_value();
+	}
+
+	T& fromJust(void)
+	{
+		return *m_v;
+	}
+};
+
+template <typename T>
 template <typename Fn>
-monad<std::optional<T>> monad<std::optional<T>>::operator>>(Fn &&fn);*/
+maybe<T> monad<maybe<T>>::operator>>(Fn &&fn)
+{
+	return maybe<T>();
+}
 
 }
