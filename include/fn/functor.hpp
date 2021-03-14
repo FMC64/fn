@@ -18,8 +18,8 @@ public:						\
 	auto fmap(Fn &&fn) const;		\
 }						\
 
-template <typename T, typename Fn>
-static inline decltype(auto) fmap(T &&v, Fn &&fn)
+template <typename Fn, typename T>
+static inline decltype(auto) fmap(Fn &&fn, T &&v)
 {
 	return v.fmap(std::forward<Fn>(fn));
 }

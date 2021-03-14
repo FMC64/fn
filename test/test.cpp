@@ -27,9 +27,9 @@ int main(void)
 		auto tr = [](int x) {
 			return x + 5;
 		};
-		std::cout << isJust(fmap(Nothing, tr)) << std::endl;
-		std::cout << isJust(fmap(Just(4), tr)) << std::endl;
-		std::cout << isJust(fmap(Just(-1), tr)) << std::endl;
+		std::cout << isJust(fmap(tr, Nothing)) << std::endl;
+		std::cout << isJust(fmap(tr, Just(4))) << std::endl;
+		std::cout << isJust(fmap(tr, Just(-1))) << std::endl;
 	}
 	return 0;
 }
