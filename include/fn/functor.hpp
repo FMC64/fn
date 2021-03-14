@@ -15,7 +15,7 @@ class Functor<name, T>				\
 {						\
 public:						\
 	template <typename Fn>			\
-	name<T> fmap(Fn &&fn) const;		\
+	auto fmap(Fn &&fn) const;		\
 }						\
 
 template <typename T, typename Fn>

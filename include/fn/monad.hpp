@@ -13,7 +13,7 @@ class Monad<name, T>				\
 {						\
 public:						\
 	template <typename Fn>			\
-	name<T> operator>>(Fn &&fn) const;	\
+	auto operator>>(Fn &&fn) const;	\
 }						\
 
 }

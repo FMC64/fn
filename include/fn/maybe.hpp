@@ -6,6 +6,7 @@
 #include <optional>
 #include <utility>
 #include <stdexcept>
+#include <type_traits>
 
 namespace fn {
 
@@ -23,6 +24,8 @@ class Maybe : public Functor<Maybe, T>, public Monad<Maybe, T>
 	std::optional<T> m_v;
 
 public:
+	static inline constexpr bool is_maybe_v = true;
+
 	Maybe(const Nothing_t&)
 	{
 	}
@@ -105,24 +108,27 @@ static inline Maybe<T> Just(T &&v)
 
 template <typename T>
 template <typename Fn>
-Maybe<T> Functor<Maybe, T>::fmap(Fn &&fn) const
+auto Functor<Maybe, T>::fmap(Fn &&fn) const
 {
 	auto &u = static_cast<const Maybe<T>&>(*this);
+	using Tr = decltype(fn(u.fromJust()));
 	if (u.isJust())
-		return fn(u.fromJust());
+		return Maybe<Tr>(fn(u.fromJust()));
 	else
-		return Maybe<T>();
+		return Maybe<Tr>();
 }
 
 template <typename T>
 template <typename Fn>
-Maybe<T> Monad<Maybe, T>::operator>>(Fn &&fn) const
+auto Monad<Maybe, T>::operator>>(Fn &&fn) const
 {
 	auto &u = static_cast<const Maybe<T>&>(*this);
+	using Tr = decltype(fn(u.fromJust()));
+	static_assert(Tr::is_maybe_v, ">> result must be Maybe<T>");
 	if (u.isJust())
 		return fn(u.fromJust());
 	else
-		return Maybe<T>();
+		return Tr();
 }
 
 }
