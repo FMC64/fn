@@ -2,6 +2,7 @@
 
 #include "functor.hpp"
 #include "monad.hpp"
+#include "applicative.hpp"
 
 #include <optional>
 #include <utility>
@@ -16,10 +17,11 @@ template <typename T>
 class Maybe;
 
 FN_FUNCTOR_IMPL(Maybe);
+FN_APPLICATIVE_IMPL(Maybe);
 FN_MONAD_IMPL(Maybe);
 
 template <typename T>
-class Maybe : public Functor<Maybe, T>, public Monad<Maybe, T>
+class Maybe : public Functor<Maybe, T>, public Applicative<Maybe, T>, public Monad<Maybe, T>
 {
 	std::optional<T> m_v;
 
@@ -92,6 +94,12 @@ struct Nothing_t
 	}
 
 	template <typename Fn>
+	auto appl(Fn&&) const
+	{
+		return Nothing_t{};
+	}
+
+	template <typename Fn>
 	auto operator>>(Fn&&) const
 	{
 		return Nothing_t{};
@@ -114,6 +122,18 @@ auto Functor<Maybe, T>::fmap(Fn &&fn) const
 	using Tr = decltype(fn(u.fromJust()));
 	if (u.isJust())
 		return Maybe<Tr>(fn(u.fromJust()));
+	else
+		return Maybe<Tr>();
+}
+
+template <typename T>
+template <typename Arg>
+auto Applicative<Maybe, T>::operator*(Arg &&arg) const
+{
+	auto &u = static_cast<const Maybe<T>&>(*this);
+	using Tr = decltype(u.fromJust()(arg.fromJust()));
+	if (u.isJust() && arg.isJust())
+		return Maybe<Tr>(u.fromJust()(arg.fromJust()));
 	else
 		return Maybe<Tr>();
 }

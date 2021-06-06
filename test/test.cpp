@@ -6,16 +6,13 @@
 
 using namespace fn;
 
-static inline int test(size_t av, float bv, const std::string &str)
-{
-	auto a = l_(size_t a, float b, const std::string &s)(a + b + s.size());
-	auto b = a(av);
-	return b(bv)(str);
-}
-
 int main(void)
 {
-	Just(1);
-	std::cout << fn::cog::decompose(test)(1)(2)("str") << std::endl;
+	auto r = fmap(l_(int x, int y, int z)(x + y + 2 * z), Just(1)) * Just(2) * Just(11);
+	if (isJust(r)) {
+		std::cout << fromJust(r) << std::endl;
+	} else  {
+		std::cout << "Nothing" << std::endl;
+	}
 	return 0;
 }
