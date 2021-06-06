@@ -33,23 +33,23 @@ struct remove_class<R(C::*)(A...) const volatile>
 	static inline constexpr size_t count = sizeof...(A);
 };
 
-/* CREDIT START */
-/* snippet from @Nicola Bonelli (https://stackoverflow.com/a/257382/11921314) */
-
 template <typename T>
 struct is_callable
 {
-	struct two
+	template <typename U, typename V = decltype(&U::operator())>
+	static inline constexpr bool test(void)
 	{
-		char x[2];
-	};
-	template <typename C> static char test(decltype(&C::operator()));
-	template <typename C> static two test(...);
+		return true;
+	}
 
-	static inline constexpr bool value = sizeof(test<T>(nullptr)) == sizeof(char);
+	template <typename U, typename ...Args>
+	static inline constexpr bool test(Args &&...)
+	{
+		return false;
+	}
+
+	static inline constexpr bool value = test<T>();
 };
-
-/* CREDIT END @Nicola Bonelli */
 
 template <typename T>
 struct fun_arg
