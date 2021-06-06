@@ -1,5 +1,5 @@
 #include <type_traits>
-#include <functional>
+#include <tuple>
 
 namespace fn {
 
@@ -82,19 +82,25 @@ struct fun_arg<R(*)(A...)>
 
 /* CREDIT END @ecatmur */
 
-template <size_t Count, typename TupleAcc, typename Fn>
-auto decompose_impl(TupleAcc &&acc, Fn &&fn)
+template <size_t Count, typename Acc, typename Fn>
+decltype(auto) decompose_impl(Acc &&acc, Fn &&fn)
 {
-	//if constexpr (Count)
-	return Count;
+	return [&acc, &fn]<typename First>(First &&first) -> decltype(auto) {
+		auto acc_sup = std::tuple_cat(std::forward<Acc>(acc), std::forward_as_tuple(first));
+		if constexpr (Count > 1) {
+			return decompose_impl<Count - 1>(acc_sup, std::forward<Fn>(fn));
+		} else {
+			return std::apply(std::forward<Fn>(fn), acc_sup);
+		}
+	};
 }
 
 template <typename Fn>
-auto decompose(Fn &&fn)
+decltype(auto) decompose(Fn &&fn)
 {
 	static constexpr size_t count = fun_arg<Fn>::count;
 	if constexpr (count == 0) {
-		return fn;
+		return std::forward<Fn>(fn);
 	} else {
 		return decompose_impl<count>(std::tuple<>(), std::forward<Fn>(fn));
 	}

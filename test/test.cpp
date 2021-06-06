@@ -35,7 +35,9 @@ int main(void)
 
 	std::cout << std::endl;*/
 
-	std::cout << fn::cog::decompose([](int&&, float&) {}) << std::endl;
+	auto a = fn::cog::decompose([](int a, float b) { return a + b + 2; });
+	auto b = a(1);
+	std::cout << b(2.5) << std::endl;
 	std::cout << fn::cog::decompose(3) << std::endl;
 	return 0;
 }
