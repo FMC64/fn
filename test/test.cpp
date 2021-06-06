@@ -14,5 +14,6 @@ int main(void)
 	} else  {
 		std::cout << "Nothing" << std::endl;
 	}
+	std::cout << l_()(4) << std::endl;
 	return 0;
 }
