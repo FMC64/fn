@@ -116,7 +116,7 @@ static inline Maybe<T> Just(T &&v)
 
 template <typename T>
 template <typename Fn>
-auto Functor<Maybe, T>::fmap(Fn &&fn) const
+inline auto Functor<Maybe, T>::fmap(Fn &&fn) const
 {
 	auto &u = static_cast<const Maybe<T>&>(*this);
 	using Tr = decltype(fn(u.fromJust()));
@@ -128,7 +128,7 @@ auto Functor<Maybe, T>::fmap(Fn &&fn) const
 
 template <typename T>
 template <typename Arg>
-auto Applicative<Maybe, T>::operator*(Arg &&arg) const
+inline auto Applicative<Maybe, T>::operator*(Arg &&arg) const
 {
 	auto &u = static_cast<const Maybe<T>&>(*this);
 	using Tr = decltype(u.fromJust()(arg.fromJust()));
@@ -140,7 +140,7 @@ auto Applicative<Maybe, T>::operator*(Arg &&arg) const
 
 template <typename T>
 template <typename Fn>
-auto Monad<Maybe, T>::operator>>(Fn &&fn) const
+inline auto Monad<Maybe, T>::operator>>(Fn &&fn) const
 {
 	auto &u = static_cast<const Maybe<T>&>(*this);
 	using Tr = decltype(fn(u.fromJust()));

@@ -8,7 +8,7 @@ using namespace fn;
 
 int main(void)
 {
-	auto r = fmap(l_(int x, int y, int z)(x + y + 2 * z), Just(1)) * Just(2) * Just(11);
+	auto r = l_(int x, int y, int z)(x + y + 2 * z) % Just(1) * Just(2) * Just(11);
 	if (isJust(r)) {
 		std::cout << fromJust(r) << std::endl;
 	} else  {

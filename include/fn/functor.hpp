@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <type_traits>
 
 namespace fn {
 
@@ -20,6 +21,12 @@ public:						\
 
 template <typename Fn, typename T>
 static inline decltype(auto) fmap(Fn &&fn, T &&v)
+{
+	return v.fmap(std::forward<Fn>(fn));
+}
+
+template <typename Fn, template <typename> class Ctx, typename Arg>
+static inline decltype(auto) operator%(Fn &&fn, Functor<Ctx, Arg> &&v)
 {
 	return v.fmap(std::forward<Fn>(fn));
 }
