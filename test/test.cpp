@@ -8,7 +8,7 @@ using namespace fn;
 
 int main(void)
 {
-	auto r = l_(int x, int y, int z)(x + y + 2 * z) % Just(1) * Just(2) * Just(11);
+	auto r = l_(x, y, z)(x + y + 2 * z) % Just(1) * Just(2) * Just(11) >> l_(x)(x > 10 ? Just(x * 3) : Nothing);
 	if (isJust(r)) {
 		std::cout << fromJust(r) << std::endl;
 	} else  {

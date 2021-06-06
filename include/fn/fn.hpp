@@ -2,6 +2,10 @@
 
 #include <type_traits>
 #include <tuple>
+#include <boost/preprocessor/variadic.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/facilities/expand.hpp>
 
 namespace fn {
 
@@ -58,7 +62,7 @@ struct fun_arg
 {
 	static inline constexpr size_t get_count(void)
 	{
-		if constexpr (is_callable<T>::value)
+		if constexpr (is_callable<T>::value || true)
 			return remove_class<decltype(&std::remove_reference<T>::type::operator())>::count;
 		else
 			return 0;
@@ -84,27 +88,25 @@ struct fun_arg<R(*)(A...)>
 
 /* CREDIT END @ecatmur */
 
-template <size_t Count, typename Acc, typename Fn>
-decltype(auto) decompose_impl(Acc &&acc, Fn &&fn)
+template <size_t Count, typename ...Acc, typename Fn>
+decltype(auto) decompose_impl(std::tuple<Acc...> &&acc, Fn &&fn)
 {
 	return [acc, fn]<typename First>(First &&first) -> decltype(auto) {
-		auto acc_sup = std::tuple_cat(acc, std::forward_as_tuple(first));
-		if constexpr (Count > 1) {
-			return decompose_impl<Count - 1>(acc_sup, fn);
+		if constexpr (Count == 1) {
+			return std::apply(fn, std::tuple_cat(acc, std::forward_as_tuple(first)));
 		} else {
-			return std::apply(fn, acc_sup);
+			return decompose_impl<Count - 1>(std::tuple_cat(acc, std::forward_as_tuple(first)), fn);
 		}
 	};
 }
 
-template <typename Fn>
+template <size_t Count, typename Fn>
 decltype(auto) decompose(Fn &&fn)
 {
-	static constexpr size_t count = fun_arg<Fn>::count;
-	if constexpr (count == 0) {
-		return std::forward<Fn>(fn);
+	if constexpr (Count == 0) {
+		return fn();
 	} else {
-		return decompose_impl<count>(std::tuple<>(), std::forward<Fn>(fn));
+		return decompose_impl<Count>(std::tuple<>(), std::forward<Fn>(fn));
 	}
 }
 
@@ -113,7 +115,11 @@ decltype(auto) decompose(Fn &&fn)
 }
 
 #define fn_lambda_probe_result(a) { return a; } )
+#define fn_lambda_prepend_auto_each(r, data, elem) , data elem
+#define fn_lambda_eat_first_impl(ignore, ...) __VA_ARGS__
+#define fn_lambda_eat_first(...) fn_lambda_eat_first_impl(__VA_ARGS__)
+#define fn_lambda_prepend_auto(...) BOOST_PP_SEQ_FOR_EACH(fn_lambda_prepend_auto_each, auto, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
 
-#define lv_(...) fn::cog::decompose([=](__VA_ARGS__) -> decltype(auto) fn_lambda_probe_result
-#define lr_(...) fn::cog::decompose([&](__VA_ARGS__) -> decltype(auto) fn_lambda_probe_result
-#define l_(...) fn::cog::decompose([](__VA_ARGS__) -> decltype(auto) fn_lambda_probe_result
+//#define lv_(...) fn::cog::decompose([=](__VA_ARGS__) -> decltype(auto) fn_lambda_probe_result
+//#define lr_(...) fn::cog::decompose([&](__VA_ARGS__) -> decltype(auto) fn_lambda_probe_result
+#define l_(...) fn::cog::decompose<BOOST_PP_VARIADIC_SIZE(__VA_ARGS__)>([](fn_lambda_eat_first(fn_lambda_prepend_auto(__VA_ARGS__))) -> decltype(auto) fn_lambda_probe_result
