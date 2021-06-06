@@ -122,3 +122,5 @@ decltype(auto) decompose(Fn &&fn)
 
 #define lc_(cap, ...) fn::cog::decompose<BOOST_PP_VARIADIC_SIZE(__VA_ARGS__)>(cap(__VA_OPT__(fn_lambda_eat_first(fn_lambda_prepend_auto(__VA_ARGS__)))) -> decltype(auto) fn_lambda_probe_result
 #define l_(...) lc_([], __VA_ARGS__)
+#define ls_(...) l_(x)(x __VA_ARGS__)
+#define lcs_(cap, ...) lc_(cap, x)(x __VA_ARGS__)

@@ -15,5 +15,9 @@ int main(void)
 		std::cout << "Nothing" << std::endl;
 	}
 	std::cout << l_()(4) << std::endl;
+	//auto p4 = l_(x)(x + 4);
+	//auto p4s = lcs_([], +4);
+	//auto p4s = ls_(+4);
+	std::cout << p4s(3) << std::endl;
 	return 0;
 }
