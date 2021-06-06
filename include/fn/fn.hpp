@@ -85,12 +85,12 @@ struct fun_arg<R(*)(A...)>
 template <size_t Count, typename Acc, typename Fn>
 decltype(auto) decompose_impl(Acc &&acc, Fn &&fn)
 {
-	return [&acc, &fn]<typename First>(First &&first) -> decltype(auto) {
-		auto acc_sup = std::tuple_cat(std::forward<Acc>(acc), std::forward_as_tuple(first));
+	return [acc, fn]<typename First>(First &&first) -> decltype(auto) {
+		auto acc_sup = std::tuple_cat(acc, std::forward_as_tuple(first));
 		if constexpr (Count > 1) {
-			return decompose_impl<Count - 1>(acc_sup, std::forward<Fn>(fn));
+			return decompose_impl<Count - 1>(acc_sup, fn);
 		} else {
-			return std::apply(std::forward<Fn>(fn), acc_sup);
+			return std::apply(fn, acc_sup);
 		}
 	};
 }

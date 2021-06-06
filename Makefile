@@ -1,5 +1,5 @@
 CXX = clang++
-CPPFLAGS = -std=c++20 -Wall -Wextra
+CPPFLAGS = -std=c++20 -Wall -Wextra -O3
 
 TEST = test_bin
 
