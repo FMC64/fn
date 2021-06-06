@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include "../include/fn/maybe.hpp"
+#include "../include/fn/fn.hpp"
 
 using namespace fn;
 
@@ -9,7 +10,7 @@ int main(void)
 {
 	std::cout << "OK" << std::endl;
 
-	std::cout << std::endl;
+	/*std::cout << std::endl;
 	{
 		auto tr = [](int x) -> fn::Maybe<int> {
 			if (x >= 0)
@@ -31,5 +32,10 @@ int main(void)
 		std::cout << isJust(fmap(tr, Just(4))) << std::endl;
 		std::cout << isJust(fmap(tr, Just(-1))) << std::endl;
 	}
+
+	std::cout << std::endl;*/
+
+	std::cout << fn::cog::decompose([](int&&, float&) {}) << std::endl;
+	std::cout << fn::cog::decompose(3) << std::endl;
 	return 0;
 }
