@@ -1,3 +1,5 @@
+#pragma once
+
 #include <type_traits>
 #include <tuple>
 
@@ -109,3 +111,9 @@ decltype(auto) decompose(Fn &&fn)
 }
 
 }
+
+#define fn_lambda_probe_result(a) { return a; } )
+
+#define lv_(...) fn::cog::decompose([=](__VA_ARGS__) -> decltype(auto) fn_lambda_probe_result
+#define lr_(...) fn::cog::decompose([&](__VA_ARGS__) -> decltype(auto) fn_lambda_probe_result
+#define l_(...) fn::cog::decompose([](__VA_ARGS__) -> decltype(auto) fn_lambda_probe_result
