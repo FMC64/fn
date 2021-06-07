@@ -36,6 +36,10 @@ public:
 		m_v(std::forward<Args>(args)...)
 	{
 	}
+	Maybe(Pure<T> &&v) :
+		m_v(v.get())
+	{
+	}
 
 	bool isJust(void) const
 	{
