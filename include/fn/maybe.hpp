@@ -36,7 +36,8 @@ public:
 		m_v(std::forward<Args>(args)...)
 	{
 	}
-	Maybe(Pure<T> &&v) :
+	template <typename U>
+	Maybe(Pure<U> &&v) :
 		m_v(v.get())
 	{
 	}

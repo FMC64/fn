@@ -22,6 +22,7 @@ public:						\
 
 #include "functor.hpp"
 #include "monad.hpp"
+#include "fn.hpp"
 
 namespace fn {
 
@@ -49,11 +50,9 @@ public:
 	}
 };
 
-template <typename T>
-auto pure(T &&v)
-{
+static inline auto pure = cog::decompose<1>([]<typename T>(T &&v) {
 	return Pure<T>(std::forward<T>(v));
-}
+});
 
 template <typename T>
 template <typename Fn>

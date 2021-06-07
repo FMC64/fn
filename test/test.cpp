@@ -25,6 +25,6 @@ int main(void)
 	std::cout << fromJust(pure(lps_(+)) * Just(3) * Just(5)) << std::endl;
 	std::cout << fromJust(lps_(+) % Just(std::string("johntra")) * Just(std::string("volta"))) << std::endl;
 	Maybe<int>(pure(3));
-	std::cout << (pure(1) >> l_(x)(pure(x))).get() << std::endl;
+	std::cout << (pure(1) >> pure >> pure >> pure).get() << std::endl;
 	return 0;
 }
